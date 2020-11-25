@@ -254,6 +254,7 @@ let packagePlugin = function (pluginDirName, dontCopyFile, dontMinJs) {
         .pipe(fs.createWriteStream(zipFilePath))
         .on("finish", function () {
             showFileInExplore(pluginOutPath);
+            console.log('✅[打包]成功!');
         })
         .on('error', function () {
             console.log("❌[打包]失败: ");
@@ -261,11 +262,16 @@ let packagePlugin = function (pluginDirName, dontCopyFile, dontMinJs) {
 };
 
 // 在文件夹中展示打包文件
-function showFileInExplore(showPath) {
+function showFileInExplore (showPath) {
     let exec = require('child_process').exec;
     let platform = require('os').platform();
+    let cmd = null;
     if (platform === 'darwin') {
-        let cmd = "open " + showPath;
+        cmd = 'open ' + showPath;
+    } else if (platform === 'win32') {
+        cmd = 'explorer ' + showPath;
+    }
+    if (cmd) {
         console.log('😂[CMD] ' + cmd);
         exec(cmd, function (error, stdout, stderr) {
             if (error) {
@@ -274,8 +280,6 @@ function showFileInExplore(showPath) {
             }
             console.log(stdout);
         }.bind(this));
-    } else if (platform === 'win32') {
-        // todo win
     }
 }
 
@@ -286,9 +290,10 @@ gulp.task("发布插件: hot-update-tools", function () {
 });
 
 
-gulp.task("发布cc-inspector插件", function () {
-    packagePlugin('cc-inspector');
+gulp.task("发布excel-killer插件", function () {
+    packagePlugin('excel-killer');
 });
+
 
 gulp.task("调试主进程", function () {
     let Path = require("path");
